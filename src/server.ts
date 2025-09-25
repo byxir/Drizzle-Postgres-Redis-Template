@@ -2,7 +2,7 @@ import express from "express";
 import cookies from "cookie-parser";
 import cors from "cors";
 import session from "express-session";
-import RedisStore from "connect-redis";
+import { RedisStore } from "connect-redis";
 
 import redisClient from "./db/redis";
 

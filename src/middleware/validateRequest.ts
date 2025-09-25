@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { AnyZodObject, ZodError } from "zod";
+import { ZodObject, ZodError } from "zod";
 
 /**
  * @param schema  Schema Object to compare against ZodSchema
@@ -10,7 +10,7 @@ import { AnyZodObject, ZodError } from "zod";
  */
 
 export const validateRequest =
-  (schema: AnyZodObject) => async (req: Request, res: Response, next: NextFunction) => {
+  (schema: ZodObject) => async (req: Request, res: Response, next: NextFunction) => {
     try {
       schema.parse({
         body: req.body,

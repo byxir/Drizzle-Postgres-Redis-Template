@@ -50,15 +50,15 @@ const environmentVariableSchema = z.object({
 try {
   environmentVariableSchema.parse(process.env);
 } catch (error) {
-  throw new Error("Please specify all environment variables");
+  throw new Error("Please specify all environment variables", error);
 }
 
-type EnvSchemaType = z.infer<typeof environmentVariableSchema>;
+// type EnvSchemaType = z.infer<typeof environmentVariableSchema>;
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace NodeJS {
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface ProcessEnv extends EnvSchemaType {}
+    // interface ProcessEnv extends EnvSchemaType {}
   }
 }
