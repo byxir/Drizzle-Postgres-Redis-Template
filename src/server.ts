@@ -2,6 +2,8 @@ import express from "express";
 import cookies from "cookie-parser";
 import cors from "cors";
 import session from "express-session";
+import { setupSwagger } from "./plugins/swagger";
+
 import { RedisStore } from "connect-redis";
 
 import redisClient from "./db/redis";
@@ -31,6 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookies());
 app.use(cors());
+setupSwagger(app);
 app.use(
   session({
     store: new RedisStore({ client: redisClient }),
