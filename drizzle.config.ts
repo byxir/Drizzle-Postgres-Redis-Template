@@ -8,7 +8,8 @@ import {
 } from "./src/config";
 
 export default {
-  driver: "pg",
+  // driver: "pg",
+  dialect: "postgresql",
   schema: "./src/model",
   out: "./src/drizzle",
   dbCredentials: {
@@ -16,7 +17,8 @@ export default {
     port: POSTGRES_PORT as number,
     user: POSTGRES_USER as string,
     password: POSTGRES_PASSWORD as string,
-    database: POSTGRES_DATABASE as string
+    database: POSTGRES_DATABASE as string,
+    ssl: false
   },
   //Print all messages/statements
   verbose: true,
