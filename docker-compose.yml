@@ -11,7 +11,7 @@ services:
     env_file:
       - .env.local
     ports:
-      - 5001:5000
+      - 3000:3000
     networks:
       - backend-drizzle
     volumes:

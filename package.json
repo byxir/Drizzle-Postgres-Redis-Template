@@ -11,9 +11,8 @@
     "format": "prettier --write .",
     "build": "tsc && tsc-alias",
     "start": "pm2 start ./dist/index.js --no-daemon",
-    "migration:generate": "drizzle-kit generate:pg --schema=./src/model",
-    "migration:push": "drizzle-kit push:pg",
-    "migrate": "drizzle-kit generate:pg --schema=./src/model && drizzle-kit push:pg"
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate"
   },
   "author": "",
   "license": "MIT",

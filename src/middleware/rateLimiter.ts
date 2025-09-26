@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from "express";
+import { fromNodeHeaders } from "better-auth/node";
+import { auth } from "src/lib/authConfig";
 import redisClient from "src/db/redis";
 import { RateLimitError } from "src/utils/error";
 import {
@@ -9,26 +11,21 @@ import {
 
 const rateLimiter = async (req: Request, res: Response, next: NextFunction) => {
   let ttl: number;
-  //If the request is sent by logged in user
-  if (req.session.userId) {
-    const numberOfRequestByAuthorizedUser = await redisClient.incr(req.session.userId);
+  // Try to read Better Auth session
+  const session = await auth.api.getSession({ headers: fromNodeHeaders(req.headers) });
 
-    //If it is their first visit
+  if (session && session.user) {
+    const userKey = `user:${session.user.id}`;
+    const numberOfRequestByAuthorizedUser = await redisClient.incr(userKey);
+
     if (numberOfRequestByAuthorizedUser === 1) {
-      //We set their userid as key and that key will expire in specified amount of seconds
-      await redisClient.expire(req.session.userId, WINDOW_SIZE_IN_SECONDS);
+      await redisClient.expire(userKey, WINDOW_SIZE_IN_SECONDS);
       ttl = WINDOW_SIZE_IN_SECONDS;
     } else {
-      ttl = await redisClient.ttl(req.session.userId);
+      ttl = await redisClient.ttl(userKey);
     }
     res.setHeader("X-Rate-Limit", ttl);
 
-    //If the number of requests made by the user is higher than we have set
-    //we rate limit them and throw RateLimitError.
-    //We could also implement another logic where we store how many
-    //times a user has reached rate limit. Let's say a user has got rate
-    //limit error 10 times in the past 14 days, then we can ban the account
-    //We might need to store that analytics in a different database
     if (numberOfRequestByAuthorizedUser >= MAX_NUMBER_OF_REQUESTS_AUTH_USER_PER_WINDOW_SIZE) {
       throw new RateLimitError("Too many requests! Rate Limit Exceeded!");
     } else {
